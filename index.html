@@ -133,6 +133,40 @@ button{
 <script>
 
 window.onload=function(){
+let audioUnlocked=false;
+
+function unlockAudio(){
+
+if(audioUnlocked) return;
+
+audioUnlocked=true;
+
+// play and immediately pause to unlock
+scanSound.play().then(()=>{
+scanSound.pause();
+scanSound.currentTime=0;
+}).catch(()=>{});
+
+boingSound.play().then(()=>{
+boingSound.pause();
+boingSound.currentTime=0;
+}).catch(()=>{});
+
+successSound.play().then(()=>{
+successSound.pause();
+successSound.currentTime=0;
+}).catch(()=>{});
+
+music.play().then(()=>{
+music.pause();
+music.currentTime=0;
+}).catch(()=>{});
+
+}
+document.addEventListener("click", unlockAudio);
+document.addEventListener("mousemove", unlockAudio);
+document.addEventListener("touchstart", unlockAudio);
+document.addEventListener("keydown", unlockAudio);
 
 const music=document.getElementById("music");
 
