@@ -7,7 +7,7 @@
 body{
   margin:0;
   overflow:hidden;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
   background:linear-gradient(135deg,#1e1e2f,#ff4d6d);
   color:white;
   text-align:center;
@@ -45,6 +45,37 @@ body{
   flex-direction:column;
   background:#0f0f1a;
 }
+#scanner{
+  position:relative;
+  width:300px;
+  height:200px;
+  margin-bottom:30px;
+  background:#111;
+  overflow:hidden;
+  border:2px solid #ff0000;
+  border-radius:10px;
+  animation:pulseScanner 1.5s infinite alternate;
+}
+.scan-line{
+  position:absolute;
+  width:100%;
+  height:4px;
+  background:red;
+  top:0;
+  animation:scan 2s linear infinite;
+  opacity:0.6;
+}
+.scan-line:nth-child(2){animation-delay:0.66s;}
+.scan-line:nth-child(3){animation-delay:1.33s;}
+@keyframes scan{
+  0%{top:0;}
+  50%{top:196px;}
+  100%{top:0;}
+}
+@keyframes pulseScanner{
+  0%{box-shadow:0 0 10px #ff0000;}
+  100%{box-shadow:0 0 25px #ff0000;}
+}
 #status{margin-bottom:20px;font-size:24px;}
 #barContainer{
   width:320px;
@@ -54,11 +85,7 @@ body{
   border-radius:10px;
   overflow:hidden;
 }
-#bar{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#00c853,#69f0ae);
-}
+#bar{height:100%;width:0%;background:linear-gradient(90deg,#00c853,#69f0ae);}
 #percent{margin-top:15px;font-size:20px;}
 
 /* MAIN */
@@ -101,6 +128,11 @@ button{
 
 <!-- LOADING SCREEN -->
 <div id="loading">
+  <div id="scanner">
+    <div class="scan-line"></div>
+    <div class="scan-line"></div>
+    <div class="scan-line"></div>
+  </div>
   <div id="status">Initializing scan...</div>
   <div id="barContainer"><div id="bar"></div></div>
   <div id="percent">0%</div>
@@ -192,6 +224,10 @@ function startLoading(){
       status.innerText=scanMessages[Math.floor(percent/16)];
     }
 
+    // make scan lines pulse with sound
+    const scanner=document.getElementById("scanner");
+    scanner.style.borderColor = `rgb(255, ${Math.floor(Math.random()*100)}, ${Math.floor(Math.random()*100)})`;
+
     if(percent>=100){
       clearInterval(interval);
       scanSound.pause(); scanSound.currentTime=0;
@@ -203,16 +239,29 @@ function startLoading(){
 
 // NO BUTTON RUNAWAY
 function centerNo(){no.style.left="60%"; no.style.top="60%";}
-no.onmouseover=()=>{
+no.onmouseover = ()=>{
+  if(no.style.display==="none") return; // stop boing if NO disappeared
+
   boingSound.currentTime=0; boingSound.play().catch(()=>{});
+
   let x=Math.random()*(window.innerWidth-100);
   let y=Math.random()*(window.innerHeight-50);
   no.style.left=x+"px"; no.style.top=y+"px";
+
   message.innerText=funnyMessages[Math.floor(Math.random()*funnyMessages.length)];
-  yesSize+=4; yes.style.fontSize=yesSize+"px";
-  noSize-=2;
-  if(noSize<=8){no.style.display="none"; message.innerText="There was never really a choice 😌";}
-  else{no.style.fontSize=noSize+"px"; no.style.padding=(noSize/2)+"px "+noSize+"px";}
+
+  yesSize +=4;
+  yes.style.fontSize=yesSize+"px";
+
+  noSize -=2;
+  if(noSize<=8){
+    no.style.display="none";
+    message.innerText="There was never really a choice 😌";
+    no.onmouseover = null; // disable boing completely
+  } else {
+    no.style.fontSize=noSize+"px";
+    no.style.padding=(noSize/2)+"px "+noSize+"px";
+  }
 };
 
 // YES BUTTON CLICK
@@ -241,8 +290,8 @@ function confettiExplosion(){
 
     let anim=setInterval(()=>{
       vy+=gravity;
-      let x=parseFloat(conf.style.left) + vx;
-      let y=parseFloat(conf.style.top) + vy;
+      let x=parseFloat(conf.style.left)+vx;
+      let y=parseFloat(conf.style.top)+vy;
       conf.style.left=x+"px";
       conf.style.top=y+"px";
       conf.style.transform=`rotate(${rotation+=5}deg)`;
