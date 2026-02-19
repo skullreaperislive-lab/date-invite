@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>A Quick Question...</title>
+<title>Compatibility Test</title>
 
 <style>
 
@@ -36,6 +36,7 @@ button{
     border:none;
     border-radius:15px;
     cursor:pointer;
+    transition: all 0.2s ease;
 }
 
 #yes{
@@ -80,45 +81,73 @@ Analyzing compatibility... ❤️
 
 <script>
 
-// loading animation
+window.onload = function(){
+
+// LOADING SCREEN FIXED
 
 let percent=0;
-let loading=setInterval(()=>{
+let percentText=document.getElementById("percent");
+let loadingDiv=document.getElementById("loading");
+let mainDiv=document.getElementById("main");
 
-percent+=2;
-document.getElementById("percent").innerText=percent+"%";
+let loadingInterval=setInterval(function(){
+
+percent+=1;
+percentText.innerText=percent+"%";
 
 if(percent>=100){
-clearInterval(loading);
-document.getElementById("loading").style.display="none";
-document.getElementById("main").style.display="block";
+
+clearInterval(loadingInterval);
+
+loadingDiv.style.display="none";
+mainDiv.style.display="block";
+
+centerNoButton();
+
 }
 
-},40);
+},30);
 
 
-// funny messages
-
-const messages=[
-"Nice try 😏",
-"That option is disabled",
-"You almost had it",
-"System says YES only",
-"Be honest 😄",
-"Don't break my heart",
-"Access denied",
-"Suspicious choice detected"
-];
+// ELEMENTS
 
 const no=document.getElementById("no");
 const yes=document.getElementById("yes");
 const message=document.getElementById("message");
 
 let yesSize=24;
+let noSize=24;
 
-// make NO run away
+
+// MESSAGES
+
+const messages=[
+"Nice try 😏",
+"Nope 😌",
+"That won't work",
+"You must choose wisely",
+"System blocked that choice",
+"Try again 😄",
+"Access denied",
+"Be honest..."
+];
+
+
+// CENTER NO BUTTON INITIALLY
+
+function centerNoButton(){
+
+no.style.left=(window.innerWidth/2 + 80)+"px";
+no.style.top=(window.innerHeight/2 + 20)+"px";
+
+}
+
+
+// MOVE + SHRINK NO BUTTON
 
 function moveNo(){
+
+// random position
 
 let x=Math.random()*(window.innerWidth-100);
 let y=Math.random()*(window.innerHeight-50);
@@ -126,35 +155,61 @@ let y=Math.random()*(window.innerHeight-50);
 no.style.left=x+"px";
 no.style.top=y+"px";
 
+
+// funny message
+
 message.innerText=messages[Math.floor(Math.random()*messages.length)];
+
 
 // grow YES button
 
-yesSize+=5;
+yesSize+=4;
 yes.style.fontSize=yesSize+"px";
 
+
+// shrink NO button
+
+noSize-=2;
+
+if(noSize<=8){
+
+no.style.display="none";
+message.innerText="Nice. That's the correct choice 😌";
+
+}else{
+
+no.style.fontSize=noSize+"px";
+no.style.padding=(noSize/2)+"px "+(noSize)+"px";
+
 }
+
+}
+
+
+// EVENTS
 
 no.addEventListener("mouseover",moveNo);
 no.addEventListener("click",moveNo);
 
 
-// YES clicked
+// YES CLICK
 
-yes.addEventListener("click",()=>{
+yes.addEventListener("click",function(){
 
-document.body.innerHTML="<h1 style='margin-top:20%'>Good choice 😌</h1><h2>Opening Instagram...</h2>";
+document.body.innerHTML="<h1 style='margin-top:20%'>Excellent choice 😌</h1><h2>Redirecting...</h2>";
 
 createConfetti();
 
-setTimeout(()=>{
+setTimeout(function(){
+
 window.location.href="https://instagram.com/_its_me_kev";
+
 },2000);
 
 });
 
 
-// confetti
+// CONFETTI
 
 function createConfetti(){
 
@@ -174,15 +229,17 @@ confetti.style.opacity=Math.random();
 
 document.body.appendChild(confetti);
 
-let fall=setInterval(()=>{
+let fall=setInterval(function(){
 
-confetti.style.top=parseInt(confetti.style.top)+5+"px";
+confetti.style.top=(parseInt(confetti.style.top)+5)+"px";
 
 },10);
 
 }
 
 }
+
+};
 
 </script>
 
