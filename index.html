@@ -15,46 +15,45 @@ body{
     text-align:center;
 }
 
-/* LOADING SCREEN FIX */
+/* LOADING SCREEN */
 
 #loading{
     position:fixed;
-    top:0;
-    left:0;
     width:100%;
     height:100%;
-    background:#0f0f1a; /* dark background */
+    background:#0f0f1a;
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
     font-size:32px;
-    color:#ffffff;
-    z-index:999;
 }
 
-/* progress bar */
+#status{
+    font-size:26px;
+    margin-bottom:20px;
+}
 
 #barContainer{
-    width:300px;
+    width:320px;
     height:20px;
     background:#333;
     border-radius:10px;
-    margin-top:20px;
     overflow:hidden;
 }
 
 #bar{
     height:100%;
     width:0%;
-    background:#00c853;
-    transition:width 0.03s;
+    background:linear-gradient(90deg,#00c853,#69f0ae);
 }
 
 #percent{
-    margin-top:10px;
-    font-size:22px;
+    margin-top:15px;
+    font-size:20px;
 }
+
+/* MAIN */
 
 #main{
     display:none;
@@ -68,16 +67,15 @@ button{
     border:none;
     border-radius:15px;
     cursor:pointer;
+    transition:all 0.2s;
 }
 
 #yes{
     background:#00c853;
-    color:white;
 }
 
 #no{
     background:#d50000;
-    color:white;
     position:absolute;
 }
 
@@ -86,15 +84,23 @@ button{
     font-size:20px;
 }
 
-</style>
+/* CONFETTI */
 
+.confetti{
+    position:absolute;
+    width:10px;
+    height:10px;
+    pointer-events:none;
+}
+
+</style>
 </head>
 
 <body>
 
 <div id="loading">
 
-<div>Analyzing compatibility ❤️</div>
+<div id="status">Initializing scan...</div>
 
 <div id="barContainer">
 <div id="bar"></div>
@@ -107,9 +113,9 @@ button{
 
 <div id="main">
 
-<h1>I have a quick question for you...</h1>
+<h1>Compatibility confirmed.</h1>
 
-<h2>Would you go on a date with me? 😄</h2>
+<h2>Would you go on a date with me? 😌</h2>
 
 <button id="yes">YES</button>
 <button id="no">NO</button>
@@ -118,40 +124,63 @@ button{
 
 </div>
 
+
 <script>
 
-window.onload = function(){
+window.onload=function(){
 
-// LOADING SCREEN FIXED
+const status=document.getElementById("status");
+const bar=document.getElementById("bar");
+const percentText=document.getElementById("percent");
+
+const loading=document.getElementById("loading");
+const main=document.getElementById("main");
+
+const scanMessages=[
+"Scanning personality...",
+"Checking sense of humor...",
+"Analyzing smile...",
+"Detecting good vibes...",
+"Verifying compatibility...",
+"Finalizing results..."
+];
 
 let percent=0;
-let percentText=document.getElementById("percent");
-let bar=document.getElementById("bar");
-let loadingDiv=document.getElementById("loading");
-let mainDiv=document.getElementById("main");
 
-let loadingInterval=setInterval(function(){
+let interval=setInterval(()=>{
 
 percent++;
 
-percentText.innerText=percent+"%";
 bar.style.width=percent+"%";
+percentText.innerText=percent+"%";
+
+if(percent%16==0){
+
+status.innerText=
+scanMessages[Math.floor(percent/16)];
+
+}
 
 if(percent>=100){
 
-clearInterval(loadingInterval);
+clearInterval(interval);
 
-loadingDiv.style.display="none";
-mainDiv.style.display="block";
+status.innerText="Compatibility: 100%";
 
-centerNoButton();
+setTimeout(()=>{
+
+loading.style.display="none";
+main.style.display="block";
+centerNo();
+
+},500);
 
 }
 
 },25);
 
 
-// ELEMENTS
+// BUTTONS
 
 const no=document.getElementById("no");
 const yes=document.getElementById("yes");
@@ -160,36 +189,24 @@ const message=document.getElementById("message");
 let yesSize=24;
 let noSize=24;
 
-
-// MESSAGES
-
-const messages=[
+const funnyMessages=[
 "Nice try 😏",
-"Nope 😌",
-"That won't work",
-"You must choose wisely",
-"System blocked that choice",
-"Try again 😄",
 "Access denied",
-"Be honest..."
+"You can't escape fate",
+"That was suspicious",
+"System blocked that",
+"Try pressing YES 😌"
 ];
 
+function centerNo(){
 
-// CENTER NO BUTTON INITIALLY
-
-function centerNoButton(){
-
-no.style.left=(window.innerWidth/2 + 80)+"px";
-no.style.top=(window.innerHeight/2 + 20)+"px";
+no.style.left=(window.innerWidth/2+80)+"px";
+no.style.top=(window.innerHeight/2+20)+"px";
 
 }
 
 
-// MOVE + SHRINK NO BUTTON
-
 function moveNo(){
-
-// random position
 
 let x=Math.random()*(window.innerWidth-100);
 let y=Math.random()*(window.innerHeight-50);
@@ -197,89 +214,107 @@ let y=Math.random()*(window.innerHeight-50);
 no.style.left=x+"px";
 no.style.top=y+"px";
 
-
-// funny message
-
-message.innerText=messages[Math.floor(Math.random()*messages.length)];
-
-
-// grow YES button
+message.innerText=
+funnyMessages[Math.floor(Math.random()*funnyMessages.length)];
 
 yesSize+=4;
 yes.style.fontSize=yesSize+"px";
-
-
-// shrink NO button
 
 noSize-=2;
 
 if(noSize<=8){
 
 no.style.display="none";
-message.innerText="Nice. That's the correct choice 😌";
+message.innerText="There was never really a choice 😌";
 
 }else{
 
 no.style.fontSize=noSize+"px";
-no.style.padding=(noSize/2)+"px "+(noSize)+"px";
+no.style.padding=(noSize/2)+"px "+noSize+"px";
 
 }
 
 }
-
-
-// EVENTS
 
 no.addEventListener("mouseover",moveNo);
 no.addEventListener("click",moveNo);
 
 
+// REAL CONFETTI EXPLOSION
+
+function confettiExplosion(){
+
+const colors=["#ff4d6d","#00c853","#ffd600","#00b0ff","#ff9100","#e040fb"];
+
+for(let i=0;i<200;i++){
+
+let conf=document.createElement("div");
+
+conf.className="confetti";
+
+conf.style.background=
+colors[Math.floor(Math.random()*colors.length)];
+
+conf.style.left=window.innerWidth/2+"px";
+conf.style.top=window.innerHeight/2+"px";
+
+document.body.appendChild(conf);
+
+let angle=Math.random()*360;
+let velocity=Math.random()*10+5;
+
+let x=0;
+let y=0;
+
+let gravity=0.3;
+
+let vx=Math.cos(angle)*velocity;
+let vy=Math.sin(angle)*velocity;
+
+let rotate=Math.random()*360;
+
+let anim=setInterval(()=>{
+
+vy+=gravity;
+
+x+=vx;
+y+=vy;
+
+conf.style.transform=
+`translate(${x}px,${y}px) rotate(${rotate+=5}deg)`;
+
+if(y>window.innerHeight){
+
+conf.remove();
+clearInterval(anim);
+
+}
+
+},16);
+
+}
+
+}
+
+
 // YES CLICK
 
-yes.addEventListener("click",function(){
+yes.addEventListener("click",()=>{
 
-document.body.innerHTML="<h1 style='margin-top:20%'>Excellent choice 😌</h1><h2>Redirecting...</h2>";
+document.body.innerHTML=
+"<h1 style='margin-top:20%'>Excellent choice 😌</h1><h2>Preparing your future...</h2>";
 
-createConfetti();
+confettiExplosion();
 
-setTimeout(function(){
+setTimeout(()=>{
 
-window.location.href="https://instagram.com/_its_me_kev";
+window.location.href=
+"https://instagram.com/_its_me_kev";
 
-},2000);
+},2500);
 
 });
 
-
-// CONFETTI
-
-function createConfetti(){
-
-for(let i=0;i<150;i++){
-
-let confetti=document.createElement("div");
-
-confetti.style.position="absolute";
-confetti.style.width="10px";
-confetti.style.height="10px";
-confetti.style.background="white";
-
-confetti.style.left=Math.random()*window.innerWidth+"px";
-confetti.style.top="-10px";
-
-confetti.style.opacity=Math.random();
-
-document.body.appendChild(confetti);
-
-let fall=setInterval(function(){
-
-confetti.style.top=(parseInt(confetti.style.top)+5)+"px";
-
-},10);
-
-}
-
-}
 
 };
 
