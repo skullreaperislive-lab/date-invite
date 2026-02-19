@@ -15,13 +15,45 @@ body{
     text-align:center;
 }
 
-/* loading screen */
+/* LOADING SCREEN FIX */
 
 #loading{
-    position:absolute;
+    position:fixed;
+    top:0;
+    left:0;
     width:100%;
-    top:40%;
-    font-size:28px;
+    height:100%;
+    background:#0f0f1a; /* dark background */
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    font-size:32px;
+    color:#ffffff;
+    z-index:999;
+}
+
+/* progress bar */
+
+#barContainer{
+    width:300px;
+    height:20px;
+    background:#333;
+    border-radius:10px;
+    margin-top:20px;
+    overflow:hidden;
+}
+
+#bar{
+    height:100%;
+    width:0%;
+    background:#00c853;
+    transition:width 0.03s;
+}
+
+#percent{
+    margin-top:10px;
+    font-size:22px;
 }
 
 #main{
@@ -36,7 +68,6 @@ button{
     border:none;
     border-radius:15px;
     cursor:pointer;
-    transition: all 0.2s ease;
 }
 
 #yes{
@@ -56,15 +87,23 @@ button{
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div id="loading">
-Analyzing compatibility... ❤️
-<br><br>
-<span id="percent">0%</span>
+
+<div>Analyzing compatibility ❤️</div>
+
+<div id="barContainer">
+<div id="bar"></div>
 </div>
+
+<div id="percent">0%</div>
+
+</div>
+
 
 <div id="main">
 
@@ -87,13 +126,16 @@ window.onload = function(){
 
 let percent=0;
 let percentText=document.getElementById("percent");
+let bar=document.getElementById("bar");
 let loadingDiv=document.getElementById("loading");
 let mainDiv=document.getElementById("main");
 
 let loadingInterval=setInterval(function(){
 
-percent+=1;
+percent++;
+
 percentText.innerText=percent+"%";
+bar.style.width=percent+"%";
 
 if(percent>=100){
 
@@ -106,7 +148,7 @@ centerNoButton();
 
 }
 
-},30);
+},25);
 
 
 // ELEMENTS
