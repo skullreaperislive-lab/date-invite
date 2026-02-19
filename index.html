@@ -2,95 +2,119 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Compatibility Test</title>
+<title>Compatibility Test ❤️</title>
 
 <style>
 
 body{
-    margin:0;
-    overflow:hidden;
-    font-family:Arial, sans-serif;
-    background:linear-gradient(135deg,#1e1e2f,#ff4d6d);
-    color:white;
-    text-align:center;
+margin:0;
+overflow:hidden;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#1e1e2f,#ff4d6d);
+color:white;
+text-align:center;
 }
 
-/* LOADING SCREEN */
+/* START SCREEN */
+
+#startScreen{
+position:fixed;
+width:100%;
+height:100%;
+background:#0f0f1a;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+#startButton{
+font-size:24px;
+padding:15px 40px;
+border:none;
+border-radius:12px;
+background:#00c853;
+color:white;
+cursor:pointer;
+margin-top:20px;
+}
+
+/* LOADING */
 
 #loading{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:#0f0f1a;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    font-size:32px;
+position:fixed;
+width:100%;
+height:100%;
+background:#0f0f1a;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+font-size:30px;
 }
 
 #status{
-    font-size:26px;
-    margin-bottom:20px;
+margin-bottom:20px;
+font-size:24px;
 }
 
 #barContainer{
-    width:320px;
-    height:20px;
-    background:#333;
-    border-radius:10px;
-    overflow:hidden;
+width:320px;
+height:20px;
+background:#333;
+border-radius:10px;
+overflow:hidden;
 }
 
 #bar{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#00c853,#69f0ae);
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00c853,#69f0ae);
 }
 
 #percent{
-    margin-top:15px;
-    font-size:20px;
+margin-top:15px;
+font-size:20px;
 }
 
 /* MAIN */
 
 #main{
-    display:none;
-    margin-top:15%;
+display:none;
+margin-top:15%;
 }
 
 button{
-    font-size:24px;
-    padding:15px 30px;
-    margin:20px;
-    border:none;
-    border-radius:15px;
-    cursor:pointer;
-    transition:all 0.2s;
+font-size:24px;
+padding:15px 30px;
+margin:20px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+transition:all 0.2s;
 }
 
 #yes{
-    background:#00c853;
+background:#00c853;
 }
 
 #no{
-    background:#d50000;
-    position:absolute;
+background:#d50000;
+position:absolute;
 }
 
 #message{
-    height:30px;
-    font-size:20px;
+height:30px;
+font-size:20px;
 }
 
 /* CONFETTI */
 
 .confetti{
-    position:absolute;
-    width:10px;
-    height:10px;
-    pointer-events:none;
+position:absolute;
+width:10px;
+height:10px;
+pointer-events:none;
 }
 
 </style>
@@ -98,10 +122,17 @@ button{
 
 <body>
 
-<audio id="music" src="music.mp3" loop></audio>
-<audio id="scanSound" src="scan.mp3"></audio>
-<audio id="boingSound" src="boing.mp3"></audio>
-<audio id="successSound" src="success.mp3"></audio>
+<!-- START SCREEN -->
+
+<div id="startScreen">
+<div>
+<h1>Compatibility Test ❤️</h1>
+<p>Tap to begin</p>
+<button id="startButton">BEGIN</button>
+</div>
+</div>
+
+<!-- LOADING SCREEN -->
 
 <div id="loading">
 
@@ -115,12 +146,13 @@ button{
 
 </div>
 
+<!-- MAIN -->
 
 <div id="main">
 
-<h1>Compatibility confirmed.</h1>
+<h1>Compatibility confirmed 😌</h1>
 
-<h2>Would you go on a date with me? 😌</h2>
+<h2>Would you go on a date with me?</h2>
 
 <button id="yes">YES</button>
 <button id="no">NO</button>
@@ -129,57 +161,80 @@ button{
 
 </div>
 
+<!-- AUDIO -->
+
+<audio id="music" src="music.mp3" loop></audio>
+<audio id="scanSound" src="scan.mp3"></audio>
+<audio id="boingSound" src="boing.mp3"></audio>
+<audio id="successSound" src="success.mp3"></audio>
 
 <script>
 
-window.onload=function(){
-let audioUnlocked=false;
+const startScreen=document.getElementById("startScreen");
+const startButton=document.getElementById("startButton");
 
-function unlockAudio(){
+const loading=document.getElementById("loading");
+const main=document.getElementById("main");
 
-if(audioUnlocked) return;
+const bar=document.getElementById("bar");
+const percentText=document.getElementById("percent");
+const status=document.getElementById("status");
 
-audioUnlocked=true;
-
-// play and immediately pause to unlock
-scanSound.play().then(()=>{
-scanSound.pause();
-scanSound.currentTime=0;
-}).catch(()=>{});
-
-boingSound.play().then(()=>{
-boingSound.pause();
-boingSound.currentTime=0;
-}).catch(()=>{});
-
-successSound.play().then(()=>{
-successSound.pause();
-successSound.currentTime=0;
-}).catch(()=>{});
-
-music.play().then(()=>{
-music.pause();
-music.currentTime=0;
-}).catch(()=>{});
-
-}
-document.addEventListener("click", unlockAudio);
-document.addEventListener("mousemove", unlockAudio);
-document.addEventListener("touchstart", unlockAudio);
-document.addEventListener("keydown", unlockAudio);
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const message=document.getElementById("message");
 
 const music=document.getElementById("music");
+const scanSound=document.getElementById("scanSound");
+const boingSound=document.getElementById("boingSound");
+const successSound=document.getElementById("successSound");
 
-let musicStarted=false;
+let yesSize=24;
+let noSize=24;
+
+const scanMessages=[
+"Scanning personality...",
+"Checking sense of humor...",
+"Analyzing smile...",
+"Detecting good vibes...",
+"Verifying compatibility...",
+"Finalizing results..."
+];
+
+const funnyMessages=[
+"Nice try 😏",
+"Access denied",
+"You can't escape fate",
+"System blocked that",
+"Try pressing YES 😌"
+];
+
+/* START BUTTON */
+
+startButton.onclick=()=>{
+
+// unlock audio
+scanSound.play().then(()=>{scanSound.pause();scanSound.currentTime=0;});
+music.play().then(()=>{music.pause();music.currentTime=0;});
+
+// start music fade
+startMusic();
+
+// show loading
+startScreen.style.display="none";
+loading.style.display="flex";
+
+// start loading
+startLoading();
+
+};
+
+/* MUSIC FADE */
 
 function startMusic(){
 
-if(!musicStarted){
-
-musicStarted=true;
-
 music.volume=0;
-music.play().catch(()=>{});
+music.play();
 
 let vol=0;
 
@@ -202,36 +257,14 @@ music.volume=vol;
 
 }
 
-}
+/* LOADING */
 
-const scanSound=document.getElementById("scanSound");
-const boingSound=document.getElementById("boingSound");
-const successSound=document.getElementById("successSound");
-
-// play scan sound every message change
-function playScan(){
-scanSound.currentTime=0;
-scanSound.play().catch(()=>{});
-}
-
-
-const status=document.getElementById("status");
-const bar=document.getElementById("bar");
-const percentText=document.getElementById("percent");
-
-const loading=document.getElementById("loading");
-const main=document.getElementById("main");
-
-const scanMessages=[
-"Scanning personality...",
-"Checking sense of humor...",
-"Analyzing smile...",
-"Detecting good vibes...",
-"Verifying compatibility...",
-"Finalizing results..."
-];
+function startLoading(){
 
 let percent=0;
+
+scanSound.currentTime=0;
+scanSound.play();
 
 let interval=setInterval(()=>{
 
@@ -242,8 +275,6 @@ percentText.innerText=percent+"%";
 
 if(percent%16==0){
 
-playScan();
-
 status.innerText=
 scanMessages[Math.floor(percent/16)];
 
@@ -253,6 +284,10 @@ if(percent>=100){
 
 clearInterval(interval);
 
+// STOP scan sound cleanly
+scanSound.pause();
+scanSound.currentTime=0;
+
 status.innerText="Compatibility: 100%";
 
 setTimeout(()=>{
@@ -261,30 +296,15 @@ loading.style.display="none";
 main.style.display="block";
 centerNo();
 
-},500);
+},800);
 
 }
 
 },100);
 
+}
 
-// BUTTONS
-
-const no=document.getElementById("no");
-const yes=document.getElementById("yes");
-const message=document.getElementById("message");
-
-let yesSize=24;
-let noSize=24;
-
-const funnyMessages=[
-"Nice try 😏",
-"Access denied",
-"You can't escape fate",
-"That was suspicious",
-"System blocked that",
-"Try pressing YES 😌"
-];
+/* CENTER NO */
 
 function centerNo(){
 
@@ -293,11 +313,12 @@ no.style.top=(window.innerHeight/2+20)+"px";
 
 }
 
+/* MOVE NO */
 
 function moveNo(){
-    
+
 boingSound.currentTime=0;
-boingSound.play().catch(()=>{});
+boingSound.play();
 
 let x=Math.random()*(window.innerWidth-100);
 let y=Math.random()*(window.innerHeight-50);
@@ -327,15 +348,10 @@ no.style.padding=(noSize/2)+"px "+noSize+"px";
 
 }
 
-no.addEventListener("mouseover",moveNo);
-no.addEventListener("click",moveNo);
-document.addEventListener("click",startMusic);
-document.addEventListener("mousemove",startMusic);
-document.addEventListener("touchstart",startMusic);
+no.onmouseover=moveNo;
+no.onclick=moveNo;
 
-
-
-// REAL CONFETTI EXPLOSION
+/* CONFETTI */
 
 function confettiExplosion(){
 
@@ -366,17 +382,14 @@ let gravity=0.3;
 let vx=Math.cos(angle)*velocity;
 let vy=Math.sin(angle)*velocity;
 
-let rotate=Math.random()*360;
-
 let anim=setInterval(()=>{
 
 vy+=gravity;
-
 x+=vx;
 y+=vy;
 
 conf.style.transform=
-`translate(${x}px,${y}px) rotate(${rotate+=5}deg)`;
+`translate(${x}px,${y}px)`;
 
 if(y>window.innerHeight){
 
@@ -391,17 +404,16 @@ clearInterval(anim);
 
 }
 
+/* YES CLICK */
 
-// YES CLICK
+yes.onclick=()=>{
 
-yes.addEventListener("click",()=>{
-    
 music.pause();
 
-successSound.play().catch(()=>{});
+successSound.play();
 
 document.body.innerHTML=
-"<h1 style='margin-top:20%'>Excellent choice 😌</h1><h2>Preparing your future...</h2>";
+"<h1 style='margin-top:20%'>Excellent choice 😌</h1><h2>Opening Instagram...</h2>";
 
 confettiExplosion();
 
@@ -411,9 +423,6 @@ window.location.href=
 "https://instagram.com/_its_me_kev";
 
 },2500);
-
-});
-
 
 };
 
