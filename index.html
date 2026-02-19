@@ -2,139 +2,187 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>One Important Question...</title>
+<title>A Quick Question...</title>
 
 <style>
-body {
-    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-    font-family: Arial, sans-serif;
-    text-align: center;
-    height: 100vh;
-    overflow: hidden;
+
+body{
+    margin:0;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#1e1e2f,#ff4d6d);
+    color:white;
+    text-align:center;
 }
 
-.container {
-    margin-top: 100px;
+/* loading screen */
+
+#loading{
+    position:absolute;
+    width:100%;
+    top:40%;
+    font-size:28px;
 }
 
-h1 {
-    font-size: 40px;
-    color: white;
-    animation: pulse 1.5s infinite;
+#main{
+    display:none;
+    margin-top:15%;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+button{
+    font-size:24px;
+    padding:15px 30px;
+    margin:20px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
 }
 
-button {
-    font-size: 22px;
-    padding: 15px 30px;
-    margin: 20px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.2s;
+#yes{
+    background:#00c853;
+    color:white;
 }
 
-#yesBtn {
-    background-color: #4CAF50;
-    color: white;
+#no{
+    background:#d50000;
+    color:white;
+    position:absolute;
 }
 
-#yesBtn:hover {
-    transform: scale(1.1);
+#message{
+    height:30px;
+    font-size:20px;
 }
 
-#noBtn {
-    background-color: #ff4d4d;
-    color: white;
-    position: absolute;
-}
-
-#message {
-    color: white;
-    font-size: 22px;
-    height: 30px;
-}
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>Will you go on a date with me? ❤️</h1>
-    
-    <button id="yesBtn">YES 😍</button>
-    <button id="noBtn">NO 😢</button>
+<div id="loading">
+Analyzing compatibility... ❤️
+<br><br>
+<span id="percent">0%</span>
+</div>
 
-    <div id="message"></div>
+<div id="main">
+
+<h1>I have a quick question for you...</h1>
+
+<h2>Would you go on a date with me? 😄</h2>
+
+<button id="yes">YES</button>
+<button id="no">NO</button>
+
+<div id="message"></div>
+
 </div>
 
 <script>
 
-const noBtn = document.getElementById("noBtn");
-const yesBtn = document.getElementById("yesBtn");
-const message = document.getElementById("message");
+// loading animation
 
-const funnyMessages = [
-    "Nice try 😏",
-    "You can't escape destiny",
-    "That option is unavailable",
-    "Error: feelings detected ❤️",
-    "Access denied ❌",
-    "Please press YES instead 😌",
-    "Don't break my heart 💔",
-    "System refuses rejection 🤖"
-];
+let percent=0;
+let loading=setInterval(()=>{
 
-function moveButton() {
+percent+=2;
+document.getElementById("percent").innerText=percent+"%";
 
-    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-
-    const randomMessage =
-        funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
-
-    message.innerText = randomMessage;
+if(percent>=100){
+clearInterval(loading);
+document.getElementById("loading").style.display="none";
+document.getElementById("main").style.display="block";
 }
 
-// Run away on hover
-noBtn.addEventListener("mouseover", moveButton);
+},40);
 
-// Run away on click attempt (mobile protection)
-noBtn.addEventListener("click", moveButton);
 
-yesBtn.addEventListener("click", () => {
+// funny messages
 
-    document.body.innerHTML = `
-        <h1 style="color:white;margin-top:20%">YAY!!! ❤️</h1>
-        <h2 style="color:white">Opening Instagram...</h2>
-    `;
+const messages=[
+"Nice try 😏",
+"That option is disabled",
+"You almost had it",
+"System says YES only",
+"Be honest 😄",
+"Don't break my heart",
+"Access denied",
+"Suspicious choice detected"
+];
 
-    // confetti
-    for(let i=0;i<100;i++){
-        const confetti=document.createElement("div");
-        confetti.style.position="absolute";
-        confetti.style.width="10px";
-        confetti.style.height="10px";
-        confetti.style.background="white";
-        confetti.style.left=Math.random()*window.innerWidth+"px";
-        confetti.style.top=Math.random()*window.innerHeight+"px";
-        confetti.style.opacity=Math.random();
-        document.body.appendChild(confetti);
-    }
+const no=document.getElementById("no");
+const yes=document.getElementById("yes");
+const message=document.getElementById("message");
 
-    setTimeout(()=>{
-        window.location.href="https://instagram.com/_its_me_kev";
-    },2000);
+let yesSize=24;
+
+// make NO run away
+
+function moveNo(){
+
+let x=Math.random()*(window.innerWidth-100);
+let y=Math.random()*(window.innerHeight-50);
+
+no.style.left=x+"px";
+no.style.top=y+"px";
+
+message.innerText=messages[Math.floor(Math.random()*messages.length)];
+
+// grow YES button
+
+yesSize+=5;
+yes.style.fontSize=yesSize+"px";
+
+}
+
+no.addEventListener("mouseover",moveNo);
+no.addEventListener("click",moveNo);
+
+
+// YES clicked
+
+yes.addEventListener("click",()=>{
+
+document.body.innerHTML="<h1 style='margin-top:20%'>Good choice 😌</h1><h2>Opening Instagram...</h2>";
+
+createConfetti();
+
+setTimeout(()=>{
+window.location.href="https://instagram.com/YOUR_INSTAGRAM_USERNAME";
+},2000);
 
 });
+
+
+// confetti
+
+function createConfetti(){
+
+for(let i=0;i<150;i++){
+
+let confetti=document.createElement("div");
+
+confetti.style.position="absolute";
+confetti.style.width="10px";
+confetti.style.height="10px";
+confetti.style.background="white";
+
+confetti.style.left=Math.random()*window.innerWidth+"px";
+confetti.style.top="-10px";
+
+confetti.style.opacity=Math.random();
+
+document.body.appendChild(confetti);
+
+let fall=setInterval(()=>{
+
+confetti.style.top=parseInt(confetti.style.top)+5+"px";
+
+},10);
+
+}
+
+}
 
 </script>
 
