@@ -2,16 +2,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Compatibility Test ❤️</title>
+<title>Compatibility Test</title>
 
 <style>
 
 body{
 margin:0;
-overflow:hidden;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#1e1e2f,#ff4d6d);
+background:#0f0f1a;
 color:white;
+font-family:Arial;
+overflow:hidden;
 text-align:center;
 }
 
@@ -36,32 +36,37 @@ border-radius:12px;
 background:#00c853;
 color:white;
 cursor:pointer;
-margin-top:20px;
 }
 
 /* LOADING */
 
 #loading{
+display:none;
 position:fixed;
 width:100%;
 height:100%;
-background:#0f0f1a;
-display:none;
-flex-direction:column;
 justify-content:center;
 align-items:center;
-font-size:30px;
+flex-direction:column;
+background:#0f0f1a;
 }
 
-#status{
-margin-bottom:20px;
-font-size:24px;
+#heart{
+font-size:60px;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.2);}
+100%{transform:scale(1);}
 }
 
 #barContainer{
-width:320px;
+width:300px;
 height:20px;
 background:#333;
+margin-top:20px;
 border-radius:10px;
 overflow:hidden;
 }
@@ -69,187 +74,142 @@ overflow:hidden;
 #bar{
 height:100%;
 width:0%;
-background:linear-gradient(90deg,#00c853,#69f0ae);
-}
-
-#percent{
-margin-top:15px;
-font-size:20px;
+background:#00c853;
 }
 
 /* MAIN */
 
 #main{
 display:none;
-margin-top:15%;
+height:100vh;
+justify-content:center;
+align-items:center;
+flex-direction:column;
 }
 
 button{
-font-size:24px;
-padding:15px 30px;
-margin:20px;
+font-size:20px;
+padding:10px 30px;
+margin:10px;
 border:none;
-border-radius:15px;
+border-radius:10px;
 cursor:pointer;
-transition:all 0.2s;
 }
 
 #yes{
 background:#00c853;
+color:white;
 }
 
 #no{
-background:#d50000;
+background:#ff5252;
+color:white;
 position:absolute;
 }
 
-#message{
-height:30px;
-font-size:20px;
-}
-
-/* CONFETTI */
-
-.confetti{
-position:absolute;
-width:10px;
-height:10px;
+canvas{
+position:fixed;
+top:0;
+left:0;
 pointer-events:none;
 }
 
 </style>
 </head>
-
 <body>
 
 <!-- START SCREEN -->
 
 <div id="startScreen">
-<div>
-<h1>Compatibility Test ❤️</h1>
-<p>Tap to begin</p>
-<button id="startButton">BEGIN</button>
-</div>
+<button id="startButton">Tap to begin ❤️</button>
 </div>
 
-<!-- LOADING SCREEN -->
+<!-- LOADING -->
 
 <div id="loading">
-
-<div id="status">Initializing scan...</div>
+<div id="heart">❤️</div>
+<div id="status">Initializing...</div>
 
 <div id="barContainer">
 <div id="bar"></div>
 </div>
 
 <div id="percent">0%</div>
-
 </div>
 
 <!-- MAIN -->
 
 <div id="main">
 
-<h1>Compatibility confirmed 😌</h1>
-
-<h2>Would you go on a date with me?</h2>
+<h1>Will you go on a date with me?</h1>
 
 <button id="yes">YES</button>
 <button id="no">NO</button>
 
-<div id="message"></div>
-
 </div>
+
+<canvas id="confetti"></canvas>
 
 <!-- AUDIO -->
 
-<audio id="music" src="music.mp3" loop></audio>
 <audio id="scanSound" src="scan.mp3"></audio>
 <audio id="boingSound" src="boing.mp3"></audio>
 <audio id="successSound" src="success.mp3"></audio>
+<audio id="music" src="music.mp3" loop></audio>
 
 <script>
 
-const startScreen=document.getElementById("startScreen");
 const startButton=document.getElementById("startButton");
+const startScreen=document.getElementById("startScreen");
 
 const loading=document.getElementById("loading");
-const main=document.getElementById("main");
-
 const bar=document.getElementById("bar");
 const percentText=document.getElementById("percent");
 const status=document.getElementById("status");
 
+const main=document.getElementById("main");
 const yes=document.getElementById("yes");
 const no=document.getElementById("no");
-const message=document.getElementById("message");
 
-const music=document.getElementById("music");
 const scanSound=document.getElementById("scanSound");
 const boingSound=document.getElementById("boingSound");
 const successSound=document.getElementById("successSound");
-
-let yesSize=24;
-let noSize=24;
-
-const scanMessages=[
-"Scanning personality...",
-"Checking sense of humor...",
-"Analyzing smile...",
-"Detecting good vibes...",
-"Verifying compatibility...",
-"Finalizing results..."
-];
-
-const funnyMessages=[
-"Nice try 😏",
-"Access denied",
-"You can't escape fate",
-"System blocked that",
-"Try pressing YES 😌"
-];
+const music=document.getElementById("music");
 
 /* START BUTTON */
 
 startButton.onclick=()=>{
 
-// unlock audio
-scanSound.play().then(()=>{scanSound.pause();scanSound.currentTime=0;});
-music.play().then(()=>{music.pause();music.currentTime=0;});
-
-// start music fade
-startMusic();
-
-// show loading
 startScreen.style.display="none";
 loading.style.display="flex";
 
-// start loading
+music.volume=0;
+music.play().catch(()=>{});
+
+fadeMusic();
+
 startLoading();
 
 };
 
-/* MUSIC FADE */
+/* FADE MUSIC */
 
-function startMusic(){
+function fadeMusic(){
 
-music.volume=0;
-music.play();
-
-let vol=0;
+let v=0;
 
 let fade=setInterval(()=>{
 
-vol+=0.02;
+v+=0.02;
 
-if(vol>=0.4){
+if(v>=0.4){
 
 music.volume=0.4;
 clearInterval(fade);
 
 }else{
 
-music.volume=vol;
+music.volume=v;
 
 }
 
@@ -264,7 +224,7 @@ function startLoading(){
 let percent=0;
 
 scanSound.currentTime=0;
-scanSound.play();
+scanSound.play().catch(()=>{});
 
 let interval=setInterval(()=>{
 
@@ -273,52 +233,40 @@ percent++;
 bar.style.width=percent+"%";
 percentText.innerText=percent+"%";
 
-if(percent%16==0){
-
-status.innerText=
-scanMessages[Math.floor(percent/16)];
-
-}
-
 if(percent>=100){
 
 clearInterval(interval);
 
-// STOP scan sound cleanly
 scanSound.pause();
 scanSound.currentTime=0;
-
-status.innerText="Compatibility: 100%";
 
 setTimeout(()=>{
 
 loading.style.display="none";
-main.style.display="block";
+main.style.display="flex";
 centerNo();
 
-},800);
+},500);
 
 }
 
-},100);
+},80);
 
 }
 
-/* CENTER NO */
+/* RUNAWAY NO */
 
 function centerNo(){
 
-no.style.left=(window.innerWidth/2+80)+"px";
-no.style.top=(window.innerHeight/2+20)+"px";
+no.style.left="60%";
+no.style.top="60%";
 
 }
 
-/* MOVE NO */
-
-function moveNo(){
+no.onmouseover=()=>{
 
 boingSound.currentTime=0;
-boingSound.play();
+boingSound.play().catch(()=>{});
 
 let x=Math.random()*(window.innerWidth-100);
 let y=Math.random()*(window.innerHeight-50);
@@ -326,105 +274,71 @@ let y=Math.random()*(window.innerHeight-50);
 no.style.left=x+"px";
 no.style.top=y+"px";
 
-message.innerText=
-funnyMessages[Math.floor(Math.random()*funnyMessages.length)];
-
-yesSize+=4;
-yes.style.fontSize=yesSize+"px";
-
-noSize-=2;
-
-if(noSize<=8){
-
-no.style.display="none";
-message.innerText="There was never really a choice 😌";
-
-}else{
-
-no.style.fontSize=noSize+"px";
-no.style.padding=(noSize/2)+"px "+noSize+"px";
-
-}
-
-}
-
-no.onmouseover=moveNo;
-no.onclick=moveNo;
-
-/* CONFETTI */
-
-function confettiExplosion(){
-
-const colors=["#ff4d6d","#00c853","#ffd600","#00b0ff","#ff9100","#e040fb"];
-
-for(let i=0;i<200;i++){
-
-let conf=document.createElement("div");
-
-conf.className="confetti";
-
-conf.style.background=
-colors[Math.floor(Math.random()*colors.length)];
-
-conf.style.left=window.innerWidth/2+"px";
-conf.style.top=window.innerHeight/2+"px";
-
-document.body.appendChild(conf);
-
-let angle=Math.random()*360;
-let velocity=Math.random()*10+5;
-
-let x=0;
-let y=0;
-
-let gravity=0.3;
-
-let vx=Math.cos(angle)*velocity;
-let vy=Math.sin(angle)*velocity;
-
-let anim=setInterval(()=>{
-
-vy+=gravity;
-x+=vx;
-y+=vy;
-
-conf.style.transform=
-`translate(${x}px,${y}px)`;
-
-if(y>window.innerHeight){
-
-conf.remove();
-clearInterval(anim);
-
-}
-
-},16);
-
-}
-
-}
+};
 
 /* YES CLICK */
 
 yes.onclick=()=>{
 
-music.pause();
-
-successSound.play();
-
-document.body.innerHTML=
-"<h1 style='margin-top:20%'>Excellent choice 😌</h1><h2>Opening Instagram...</h2>";
+successSound.currentTime=0;
+successSound.play().catch(()=>{});
 
 confettiExplosion();
 
 setTimeout(()=>{
 
-window.location.href=
-"https://instagram.com/_its_me_kev";
+window.location.href="https://instagram.com/YOURUSERNAME";
 
-},2500);
+},2000);
 
 };
+
+/* CONFETTI */
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let pieces=[];
+
+function confettiExplosion(){
+
+for(let i=0;i<200;i++){
+
+pieces.push({
+
+x:canvas.width/2,
+y:canvas.height/2,
+vx:(Math.random()-0.5)*10,
+vy:(Math.random()-0.5)*10,
+size:Math.random()*10
+
+});
+
+}
+
+animate();
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+
+p.x+=p.vx;
+p.y+=p.vy;
+
+ctx.fillRect(p.x,p.y,p.size,p.size);
+
+});
+
+requestAnimationFrame(animate);
+
+}
 
 </script>
 
