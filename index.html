@@ -1,1 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>One Important Question...</title>
 
+<style>
+body {
+    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+    font-family: Arial, sans-serif;
+    text-align: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    margin-top: 100px;
+}
+
+h1 {
+    font-size: 40px;
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+button {
+    font-size: 22px;
+    padding: 15px 30px;
+    margin: 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#yesBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#yesBtn:hover {
+    transform: scale(1.1);
+}
+
+#noBtn {
+    background-color: #ff4d4d;
+    color: white;
+    position: absolute;
+}
+
+#message {
+    color: white;
+    font-size: 22px;
+    height: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Will you go on a date with me? ❤️</h1>
+    
+    <button id="yesBtn">YES 😍</button>
+    <button id="noBtn">NO 😢</button>
+
+    <div id="message"></div>
+</div>
+
+<script>
+
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const message = document.getElementById("message");
+
+const funnyMessages = [
+    "Nice try 😏",
+    "You can't escape destiny",
+    "That option is unavailable",
+    "Error: feelings detected ❤️",
+    "Access denied ❌",
+    "Please press YES instead 😌",
+    "Don't break my heart 💔",
+    "System refuses rejection 🤖"
+];
+
+function moveButton() {
+
+    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    const randomMessage =
+        funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+
+    message.innerText = randomMessage;
+}
+
+// Run away on hover
+noBtn.addEventListener("mouseover", moveButton);
+
+// Run away on click attempt (mobile protection)
+noBtn.addEventListener("click", moveButton);
+
+yesBtn.addEventListener("click", () => {
+
+    document.body.innerHTML = `
+        <h1 style="color:white;margin-top:20%">YAY!!! ❤️</h1>
+        <h2 style="color:white">Opening Instagram...</h2>
+    `;
+
+    // confetti
+    for(let i=0;i<100;i++){
+        const confetti=document.createElement("div");
+        confetti.style.position="absolute";
+        confetti.style.width="10px";
+        confetti.style.height="10px";
+        confetti.style.background="white";
+        confetti.style.left=Math.random()*window.innerWidth+"px";
+        confetti.style.top=Math.random()*window.innerHeight+"px";
+        confetti.style.opacity=Math.random();
+        document.body.appendChild(confetti);
+    }
+
+    setTimeout(()=>{
+        window.location.href="https://instagram.com/_its_me_kev";
+    },2000);
+
+});
+
+</script>
+
+</body>
+</html>
