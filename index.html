@@ -2,13 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Compatibility Test ❤️</title>
+<title>Face Compatibility Scanner ❤️</title>
 <style>
 body{
   margin:0;
   overflow:hidden;
   font-family:Arial,sans-serif;
-  background:linear-gradient(135deg,#1e1e2f,#ff4d6d);
+  background:black;
   color:white;
   text-align:center;
 }
@@ -34,7 +34,7 @@ body{
   cursor:pointer;
 }
 
-/* LOADING */
+/* LOADING / SCANNER FULL SCREEN */
 #loading{
   display:none;
   position:fixed;
@@ -43,52 +43,91 @@ body{
   justify-content:center;
   align-items:center;
   flex-direction:column;
-  background:#0f0f1a;
-}
-#scanner{
-  position:relative;
-  width:300px;
-  height:200px;
-  margin-bottom:30px;
-  background:#111;
+  background:black;
   overflow:hidden;
-  border:2px solid #ff0000;
-  border-radius:10px;
+}
+
+#scanner{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  overflow:hidden;
+  border:5px solid red;
+  box-sizing:border-box;
   animation:pulseScanner 1.5s infinite alternate;
 }
+
+/* SCAN LINES */
 .scan-line{
   position:absolute;
   width:100%;
   height:4px;
   background:red;
   top:0;
-  animation:scan 2s linear infinite;
+  animation:scan 3s linear infinite;
   opacity:0.6;
 }
-.scan-line:nth-child(2){animation-delay:0.66s;}
-.scan-line:nth-child(3){animation-delay:1.33s;}
+.scan-line:nth-child(2){animation-delay:1s;}
+.scan-line:nth-child(3){animation-delay:2s;}
+
 @keyframes scan{
   0%{top:0;}
-  50%{top:196px;}
+  50%{top:100%;}
   100%{top:0;}
 }
 @keyframes pulseScanner{
   0%{box-shadow:0 0 10px #ff0000;}
   100%{box-shadow:0 0 25px #ff0000;}
 }
-#status{margin-bottom:20px;font-size:24px;}
+
+/* FACE OUTLINE */
+#faceOutline{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:200px;
+  height:250px;
+  margin-left:-100px;
+  margin-top:-125px;
+  border:2px solid red;
+  border-radius:50%/60%;
+  box-sizing:border-box;
+  pointer-events:none;
+  z-index:10;
+  animation:facePulse 1.5s infinite alternate;
+}
+@keyframes facePulse{
+  0%{box-shadow:0 0 5px red;}
+  100%{box-shadow:0 0 20px red;}
+}
+
+/* SCAN STATUS */
+#status{
+  position:absolute;
+  top:80%;
+  width:100%;
+  text-align:center;
+  font-size:24px;
+  z-index:20;
+}
+
 #barContainer{
+  position:absolute;
+  bottom:15%;
+  left:50%;
+  transform:translateX(-50%);
   width:320px;
   height:20px;
   background:#333;
-  margin-top:20px;
   border-radius:10px;
   overflow:hidden;
 }
 #bar{height:100%;width:0%;background:linear-gradient(90deg,#00c853,#69f0ae);}
-#percent{margin-top:15px;font-size:20px;}
+#percent{position:absolute;bottom:10%;width:100%;text-align:center;font-size:20px;z-index:20;}
 
-/* MAIN */
+/* MAIN SCREEN */
 #main{
   display:none;
   margin-top:15%;
@@ -120,19 +159,20 @@ button{
 <!-- START SCREEN -->
 <div id="startScreen">
   <div>
-    <h1>Compatibility Test ❤️</h1>
+    <h1>Face Compatibility Test ❤️</h1>
     <p>Tap to begin</p>
     <button id="startButton">BEGIN</button>
   </div>
 </div>
 
-<!-- LOADING SCREEN -->
+<!-- LOADING / SCANNER -->
 <div id="loading">
   <div id="scanner">
     <div class="scan-line"></div>
     <div class="scan-line"></div>
     <div class="scan-line"></div>
   </div>
+  <div id="faceOutline"></div>
   <div id="status">Initializing scan...</div>
   <div id="barContainer"><div id="bar"></div></div>
   <div id="percent">0%</div>
@@ -176,11 +216,11 @@ let yesSize=24;
 let noSize=24;
 
 const scanMessages=[
-"Scanning personality...",
-"Checking sense of humor...",
-"Analyzing smile...",
-"Detecting good vibes...",
-"Verifying compatibility...",
+"Scanning face...",
+"Analyzing features...",
+"Checking expression...",
+"Verifying vibes...",
+"Calculating compatibility...",
 "Finalizing results..."
 ];
 const funnyMessages=[
@@ -215,6 +255,8 @@ function startLoading(){
   scanSound.currentTime=0;
   scanSound.play();
 
+  const scanner=document.getElementById("scanner");
+
   let interval=setInterval(()=>{
     percent++;
     bar.style.width=percent+"%";
@@ -224,8 +266,7 @@ function startLoading(){
       status.innerText=scanMessages[Math.floor(percent/16)];
     }
 
-    // make scan lines pulse with sound
-    const scanner=document.getElementById("scanner");
+    // scanner border pulse with sound
     scanner.style.borderColor = `rgb(255, ${Math.floor(Math.random()*100)}, ${Math.floor(Math.random()*100)})`;
 
     if(percent>=100){
@@ -240,7 +281,7 @@ function startLoading(){
 // NO BUTTON RUNAWAY
 function centerNo(){no.style.left="60%"; no.style.top="60%";}
 no.onmouseover = ()=>{
-  if(no.style.display==="none") return; // stop boing if NO disappeared
+  if(no.style.display==="none") return;
 
   boingSound.currentTime=0; boingSound.play().catch(()=>{});
 
@@ -257,7 +298,7 @@ no.onmouseover = ()=>{
   if(noSize<=8){
     no.style.display="none";
     message.innerText="There was never really a choice 😌";
-    no.onmouseover = null; // disable boing completely
+    no.onmouseover = null;
   } else {
     no.style.fontSize=noSize+"px";
     no.style.padding=(noSize/2)+"px "+noSize+"px";
