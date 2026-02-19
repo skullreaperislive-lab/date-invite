@@ -98,6 +98,11 @@ button{
 
 <body>
 
+<audio id="music" src="music.mp3" loop></audio>
+<audio id="scanSound" src="scan.mp3"></audio>
+<audio id="boingSound" src="boing.mp3"></audio>
+<audio id="successSound" src="success.mp3"></audio>
+
 <div id="loading">
 
 <div id="status">Initializing scan...</div>
@@ -129,6 +134,53 @@ button{
 
 window.onload=function(){
 
+const music=document.getElementById("music");
+
+let musicStarted=false;
+
+function startMusic(){
+
+if(!musicStarted){
+
+musicStarted=true;
+
+music.volume=0;
+music.play().catch(()=>{});
+
+let vol=0;
+
+let fade=setInterval(()=>{
+
+vol+=0.02;
+
+if(vol>=0.4){
+
+music.volume=0.4;
+clearInterval(fade);
+
+}else{
+
+music.volume=vol;
+
+}
+
+},100);
+
+}
+
+}
+
+const scanSound=document.getElementById("scanSound");
+const boingSound=document.getElementById("boingSound");
+const successSound=document.getElementById("successSound");
+
+// play scan sound every message change
+function playScan(){
+scanSound.currentTime=0;
+scanSound.play().catch(()=>{});
+}
+
+
 const status=document.getElementById("status");
 const bar=document.getElementById("bar");
 const percentText=document.getElementById("percent");
@@ -156,6 +208,8 @@ percentText.innerText=percent+"%";
 
 if(percent%16==0){
 
+playScan();
+
 status.innerText=
 scanMessages[Math.floor(percent/16)];
 
@@ -177,7 +231,7 @@ centerNo();
 
 }
 
-},25);
+},100);
 
 
 // BUTTONS
@@ -207,6 +261,9 @@ no.style.top=(window.innerHeight/2+20)+"px";
 
 
 function moveNo(){
+    
+boingSound.currentTime=0;
+boingSound.play().catch(()=>{});
 
 let x=Math.random()*(window.innerWidth-100);
 let y=Math.random()*(window.innerHeight-50);
@@ -238,6 +295,10 @@ no.style.padding=(noSize/2)+"px "+noSize+"px";
 
 no.addEventListener("mouseover",moveNo);
 no.addEventListener("click",moveNo);
+document.addEventListener("click",startMusic);
+document.addEventListener("mousemove",startMusic);
+document.addEventListener("touchstart",startMusic);
+
 
 
 // REAL CONFETTI EXPLOSION
@@ -300,6 +361,10 @@ clearInterval(anim);
 // YES CLICK
 
 yes.addEventListener("click",()=>{
+    
+music.pause();
+
+successSound.play().catch(()=>{});
 
 document.body.innerHTML=
 "<h1 style='margin-top:20%'>Excellent choice 😌</h1><h2>Preparing your future...</h2>";
